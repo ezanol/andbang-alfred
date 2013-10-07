@@ -41,3 +41,7 @@ if len(params) == 3:
     elif command == 'delete':
         r = api.method('/tasks/' + params[2], params[1], {}, 'delete').json()
         n.notify("Task was deleted", r["title"], r["id"])
+    else:
+        n.notify("No action was specified", "", "")
+else:
+    n.notify("Number of parameters was incorrect", "", "")
