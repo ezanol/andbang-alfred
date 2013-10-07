@@ -38,3 +38,6 @@ if len(params) == 3:
     elif command == 'activate':
         r = api.method('/tasks/' + params[2] + '/start', params[1], {}, 'post').json()
         n.notify("Task was started", r["title"], r["id"])
+    elif command == 'delete':
+        r = api.method('/tasks/' + params[2], params[1], {}, 'delete').json()
+        n.notify("Task was deleted", r["title"], r["id"])
