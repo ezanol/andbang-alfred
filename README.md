@@ -6,15 +6,15 @@ Download and install the [workflow file](https://github.com/lukekarrys/andbang-a
 
 ## How to use
 
-Basic usage: `&! [team name] [command]`
+Basic usage: `! [team name] [command]`
 
 ### First
-`&! TOKEN`
+`! TOKEN`
 
 Run the above where `TOKEN` is your generated auth token from [https://apps.andyet.com](https://apps.andyet.com/authorizations). When this is complete you will see a notification popup that your token is valid and your teams have been saved.
 
 ### If you have more than 1 team
-After typing `&!` you will see entries for each of your teams. Tab will autocomplete your team name.
+After typing `!` you will see entries for each of your teams. Tab will autocomplete your team name.
 
 ### If you have 1 team
 There will be no need or prompt to type your team name. All commands will apply to your one team.
@@ -22,7 +22,7 @@ There will be no need or prompt to type your team name. All commands will apply 
 ### Commands
 
 - `tasks` Tasks will show you all tasks for your selected team. There are different ways to interact with them:
-  - Selecting an iteam will ship it.
+  - Selecting an item will ship it.
   - Selecting with `CTRL` will later it.
   - Selecting with `SHIFT` will activate it.
   - Typing more after `tasks` will bring up an extra option to `create` a new task with that as the title.
