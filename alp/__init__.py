@@ -26,11 +26,6 @@ except ImportError:
     pass
 
 try:
-    from alp.request.request import *
-except ImportError:
-    pass
-
-try:
     from .notification import *
 except ImportError:
     pass

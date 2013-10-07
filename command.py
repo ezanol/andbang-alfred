@@ -5,6 +5,7 @@ import alp
 import teams
 import api
 import re
+from cache import *
 
 valid_commands = ['tasks']
 settings = alp.Settings()
@@ -33,8 +34,8 @@ def feedback_for_team(team, is_multi):
             title = ' '.join(commands[1:])
             output.append(alp.Item(title='Create: ' + title, valid=True, arg='create:' + team['id'] + ':' + title, icon=teams.iconPath(team)))
         else:
-            r = api.method('/me/tasks', team['id'])
-            for task in r.json():
+            tasks = api.cache_method('/me/tasks', team['id'])
+            for task in tasks:
                 output.append(alp.Item(title="Ship: " + task['title'], valid=True, arg='ship:' + team['id'] + ':' + task['id'], icon=teams.iconPath(team)))
         alp.feedback(output)
 

@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import alp
-import alp.request.requests as requests
+import requests
 import api
 
 n = alp.Notification()
