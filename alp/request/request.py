@@ -1,5 +1,4 @@
 import alp.core as core
-from bs4 import BeautifulSoup
 import requests
 import requests_cache
 
@@ -28,12 +27,6 @@ class Request(object):
             self.request = requests.get(self.url)
 
         self.ok = self.request.status_code == requests.codes.ok
-
-    def souper(self):
-        if self.request.status_code == requests.codes.ok:
-            return BeautifulSoup(self.request.text)
-        else:
-            self.request.raise_for_status()
 
     def clear_cache(self):
         if self.cache_name:
