@@ -35,3 +35,6 @@ if len(params) == 3:
     elif command == 'create':
         r = api.method('/me/tasks', params[1], {'title': params[2]}, 'post').json()
         n.notify("Task was created", r["title"], r["id"])
+    elif command == 'activate':
+        r = api.method('/tasks/' + params[2] + '/start', params[1], {}, 'post').json()
+        n.notify("Task was started", r["title"], r["id"])
