@@ -24,6 +24,7 @@ There will be no need or prompt to type your team name. All commands will apply 
 - `tasks` Tasks will show you all tasks for your selected team. There are different ways to interact with them:
   - Selecting an iteam will ship it.
   - Selecting with `CTRL` will later it.
+  - Selecting with `SHIFT` will activate it.
   - Typing more after `tasks` will bring up an extra option to `create` a new task with that as the title.
 
 - `teams` Use this if you have added/removed teams and wish to update your cached teams.
