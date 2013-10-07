@@ -11,7 +11,7 @@ Basic usage: `&! [team name] [command]`
 ### First
 `&! TOKEN`
 
-Run the above where `TOKEN` is your generated auth token from [https://apps.andyet.com](https://apps.andyet.com/). When this is complete you will see a notification popup that your token is valid and your teams have been saved.
+Run the above where `TOKEN` is your generated auth token from [https://apps.andyet.com](https://apps.andyet.com/authorizations). When this is complete you will see a notification popup that your token is valid and your teams have been saved.
 
 ### If you have more than 1 team
 After typing `&!` you will see entries for each of your teams. Tab will autocomplete your team name.
