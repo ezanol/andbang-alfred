@@ -9,12 +9,11 @@ settings = alp.Settings()
 
 def save():
     r = api.method('/me/teams')
-    resp = r.json()
     if r.status_code == 200:
+        resp = r.json()
         if len(resp) > 0:
             settings.set(teams=resp)
             write_images()
-            print 
             n.notify("AndBang Workflow Success", "Your teams were saved!", "Teams: " + ', '.join([team["name"] for team in resp]))
         else:
             n.notify("AndBang Workflow Error", "No teams were saved", "Please create one at http://andbang.com")

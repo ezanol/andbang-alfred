@@ -16,9 +16,8 @@ if len(params) < 1:
 
 command = params[0]
 
-if len(params) == 2 and command == 'token':
-    settings.set(token=params[1])
-    teams.save()
+if command == 'token':
+    api.save_token()
     sys.exit()
 
 if command == 'teams':

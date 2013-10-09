@@ -5,9 +5,8 @@ import alp
 import teams
 import api
 import re
-from cache import *
 
-valid_commands = ['tasks']
+valid_commands = ['tasks', 'notifications']
 settings = alp.Settings()
 token = settings.get('token')
 param_str = sys.argv[1]
@@ -20,16 +19,17 @@ def ac_commands(team_name, is_multi):
         if is_multi == True:
             ac = team_name + ' '
         output.append(alp.Item(title='AndBang ' + team_name + ' ' + cmd, autocomplete=ac + '' + cmd, valid=False))
-    alp.feedback(output)
+    return output
 
 def feedback_for_team(team, is_multi):
     commands = param_str.replace(team['name'], '').strip().split(' ')
+    output = []
+
     # autocomplete the valid commands
     if valid_commands.count(commands[0]) == 0:
-        ac_commands(team['name'], is_multi)
+        output = ac_commands(team['name'], is_multi)
     # Display tasks
     elif commands[0] == 'tasks':
-        output = []
         if len(commands) > 1:
             title = ' '.join(commands[1:])
             output.append(alp.Item(title='Create: ' + title, valid=True, arg='create:' + team['id'] + ':' + title, icon=teams.iconPath(team)))
@@ -37,16 +37,15 @@ def feedback_for_team(team, is_multi):
             tasks = api.cache_method('/me/tasks', team['id'])
             for task in tasks:
                 output.append(alp.Item(title="Ship: " + task['title'], valid=True, arg='ship:' + team['id'] + ':' + task['id'], icon=teams.iconPath(team)))
-        alp.feedback(output)
-
-# Trying to save a token
-if len(params) == 1 and bool(re.search("^[a-z0-9]{128}$", params[0])) == True:
-    alp.feedback(alp.Item(title='Save a token', subtitle=params[0], arg='token:' + params[0], valid=True))
-    sys.exit()
+    elif commands[0] == 'notifications':
+        notifications = tasks = api.cache_method('/me/notifications', team['id'])
+        for n in notifications:
+            output.append(alp.Item(title=n['title'], subtitle=n['body'], valid=False, icon=teams.iconPath(team)))
+    alp.feedback(output)
 
 # Do nothing until there is an access_token
 if token is None or bool(re.search("^[a-z0-9]{128}$", token)) == False:
-    alp.feedback(alp.Item(title='Save a token', subtitle='Enter your token from https://apps.andyet.com', valid=True))
+    alp.feedback(alp.Item(title='Get a token', valid=True, arg='token'))
     sys.exit()
 
 # Check that the user has a team

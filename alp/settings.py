@@ -19,7 +19,13 @@ class Settings(object):
                 payload = json.load(f)
             self._loadedSettings = payload
 
+    def load(self):
+        with codecs.open(self._settingsPath, "r", "utf-8") as f:
+            payload = json.load(f)
+        return payload
+
     def set(self, **kwargs):
+        self._loadedSettings = self.load()
         for (k, v) in kwargs.iteritems():
             self._loadedSettings[k] = v
         with codecs.open(self._settingsPath, "w", "utf-8") as f:
