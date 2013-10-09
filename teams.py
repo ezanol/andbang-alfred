@@ -1,18 +1,21 @@
 #!/usr/bin/python
 
-import alp
+import core
+import feedback
 import requests
 import api
+import notification
+import settings
 
-n = alp.Notification()
-settings = alp.Settings()
+n = notification.Notification()
+user_settings = settings.Settings()
 
 def save():
     r = api.method('/me/teams')
     if r.status_code == 200:
         resp = r.json()
         if len(resp) > 0:
-            settings.set(teams=resp)
+            user_settings.set(teams=resp)
             write_images()
             n.notify("AndBang Workflow Success", "Your teams were saved!", "Teams: " + ', '.join([team["name"] for team in resp]))
         else:
@@ -28,16 +31,3 @@ def write_images():
             with open(iconPath(team), 'wb') as f:
                 for chunk in r.iter_content():
                     f.write(chunk)
-
-def iconPath(team):
-    return alp.storage('team-' + team['name'])
-
-def get():
-    return settings.get('teams', [])
-
-def autocomplete():
-    output = []
-    teams = get()
-    for team in teams:
-        output.append(alp.Item(title="Team: " + team["name"], valid=False, autocomplete=team["name"] + ' ', icon=iconPath(team)))
-    return alp.feedback(output)

@@ -2,7 +2,7 @@
 
 import json
 import os
-import alp.core as core
+import core
 import codecs
 
 
