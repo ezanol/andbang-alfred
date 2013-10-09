@@ -30,13 +30,13 @@ def feedback_for_team(team, is_multi):
         output = ac_commands(team['name'], is_multi)
     # Display tasks
     elif commands[0] == 'tasks':
-        if len(commands) > 1:
-            title = ' '.join(commands[1:])
+        tasks = api.cache_method('/me/tasks', team['id'])
+        title = ' '.join(commands[1:]).strip()
+        if len(commands) > 1 and len(title) > 0:
             output.append(alp.Item(title='Create: ' + title, valid=True, arg='create:' + team['id'] + ':' + title, icon=teams.iconPath(team)))
-        else:
-            tasks = api.cache_method('/me/tasks', team['id'])
-            for task in tasks:
-                output.append(alp.Item(title="Ship: " + task['title'], valid=True, arg='ship:' + team['id'] + ':' + task['id'], icon=teams.iconPath(team)))
+            tasks = alp.fuzzy_search(title, tasks, lambda x: '%s' % (x['title']))
+        for task in tasks:
+            output.append(alp.Item(title="Task: " + task['title'], valid=True, arg='ship:' + team['id'] + ':' + task['id'], icon=teams.iconPath(team)))
     elif commands[0] == 'notifications':
         notifications = tasks = api.cache_method('/me/notifications', team['id'])
         for n in notifications:
