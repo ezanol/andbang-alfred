@@ -4,10 +4,9 @@ import sys
 import notification
 import settings
 import api
-import teams
 import server
 
-n = notification.Notification()
+user_settings = settings.Settings()
 
 param_str = sys.argv[1]
 params = param_str.split(':')
@@ -22,7 +21,7 @@ if command == 'token':
     sys.exit()
 
 if command == 'teams':
-    teams.save()
+    server.save_teams()
     sys.exit()
 
 if len(params) == 3:

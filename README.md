@@ -28,5 +28,8 @@ There will be no need or prompt to type your team name. All commands will apply 
 
 - `teams` Use this if you have added/removed teams and wish to update your cached teams.
 
+## Todo
+- Autoclear cache for type of request after a POST
+
 ## License
 MIT

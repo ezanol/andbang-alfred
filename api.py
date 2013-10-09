@@ -54,5 +54,3 @@ def cache_method(url, team_id=None):
             resp = r.json()
             core.feedback(core.Item(title="Error: " + resp['message'], arg="token", valid=True))
             sys.exit()
-
-    

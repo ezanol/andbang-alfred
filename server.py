@@ -3,11 +3,15 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import os
 import settings
-import teams
 import urlparse
 import webbrowser
 import urllib
+import api
+import requests
+import core
+import notification
 
+n = notification.Notification()
 user_settings = settings.Settings()
 run_server = True
 
@@ -49,3 +53,21 @@ def save_token():
     data['redirect_uri'] = 'http://localhost:3030'
     webbrowser.open('https://accounts.andbang.com/oauth/authorize?' + urllib.urlencode(data))
     run(3030)
+
+def save_teams():
+    r = api.method('/me/teams')
+    if r.status_code == 200:
+        teams = r.json()
+        if len(teams) > 0:
+            user_settings.set(teams=teams)
+            for team in teams:
+                r = requests.get('http:' + team["thumbUrl"], stream=True)
+                if r.status_code == 200:
+                    with open(core.storage('team-' + team['name']), 'wb') as f:
+                        for chunk in r.iter_content():
+                            f.write(chunk)
+            n.notify("AndBang Workflow Success", "Your teams were saved!", "Teams: " + ', '.join([team["name"] for team in teams]))
+        else:
+            n.notify("AndBang Workflow Error", "No teams were saved", "Please create one at http://andbang.com")
+    else:
+        n.notify("AndBang Workflow Error", resp["message"], "Visit http://andbang.com")

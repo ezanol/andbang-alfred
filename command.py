@@ -17,14 +17,24 @@ params = param_str.split(' ')
 def icon_path(team):
     return core.storage('team-' + team['name'])
 
-def ac_commands(team_name, is_multi):
+def ac_commands(team_name, is_multi, cmd):
+    global valid_commands
     output = []
+    if len(cmd) > 0:
+        valid_commands = [k for k in valid_commands if cmd in k]
     for cmd in valid_commands:
         ac = ''
         if is_multi == True:
             ac = team_name + ' '
         output.append(feedback.item(title=team_name + ' ' + cmd, autocomplete=ac + '' + cmd, valid=False))
+
     return output
+
+def ac_teams(user_teams):
+    output = []
+    for team in user_teams:
+        output.append(feedback.item(title="Team: " + team["name"], valid=False, autocomplete=team["name"] + ' ', icon=icon_path(team)))
+    feedback.feedback(output)
 
 def feedback_for_team(team, is_multi):
     commands = param_str.replace(team['name'], '').strip().split(' ')
@@ -32,7 +42,7 @@ def feedback_for_team(team, is_multi):
 
     # autocomplete the valid commands
     if valid_commands.count(commands[0]) == 0:
-        output = ac_commands(team['name'], is_multi)
+        output = ac_commands(team['name'], is_multi, commands[0])
     # Display tasks
     elif commands[0] == 'tasks':
         tasks = api.cache_method('/me/tasks', team['id'])
@@ -78,7 +88,4 @@ else:
             sys.exit()
 
     # Team name was not found in query
-    output = []
-    for team in user_teams:
-        output.append(feedback.item(title="Team: " + team["name"], valid=False, autocomplete=team["name"] + ' ', icon=icon_path(team)))
-    feedback.feedback(output)
+    ac_teams(user_teams)
