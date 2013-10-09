@@ -4,7 +4,7 @@ from Foundation import *
 from AppKit import *
 from PyObjCTools import AppHelper
 import platform
-import alp.core as core
+import core
 
 
 NSUserNotificationActivationTypeNone = 0

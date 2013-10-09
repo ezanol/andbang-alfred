@@ -5,8 +5,6 @@ import json
 import glob
 import time
 import os
-import webbrowser
-import urllib
 import settings
 
 user_settings = settings.Settings()
@@ -18,15 +16,6 @@ def method(url, team_id=None, data={}, method='get'):
         api_url += '/teams/' + team_id
     api_url += url
     return getattr(requests, method)(api_url, data=json.dumps(data), headers={'Authorization': 'Bearer ' + token})
-
-def save_token():
-    import server
-    data = {}
-    data['client_id'] = 'c85cbe296399c078cbf90eb10ed52a3e0dd8210c'
-    data['response_type'] = 'token'
-    data['redirect_uri'] = 'http://localhost:3030'
-    webbrowser.open('https://accounts.andbang.com/oauth/authorize?' + urllib.urlencode(data))
-    server.run(3030)
 
 def cache_method(url, team_id=None):
     api_url = 'https://api.andbang.com:443'

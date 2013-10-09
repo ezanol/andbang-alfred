@@ -54,7 +54,6 @@ if token is None or bool(re.search("^[a-z0-9]{128}$", token)) == False:
     sys.exit()
 
 # Check that the user has a team
-#user_teams = teams.get()
 user_teams = user_settings.get('teams', [])
 if len(user_teams) == 0 or params[0] == 'teams':
     title = ''

@@ -24,10 +24,10 @@ def save():
         n.notify("AndBang Workflow Error", resp["message"], "Visit http://andbang.com")
 
 def write_images():
-    teams = get()
+    teams = user_settings.get('teams', [])
     for team in teams:
         r = requests.get('http:' + team["thumbUrl"], stream=True)
         if r.status_code == 200:
-            with open(iconPath(team), 'wb') as f:
+            with open(core.storage('team-' + team['name']), 'wb') as f:
                 for chunk in r.iter_content():
                     f.write(chunk)

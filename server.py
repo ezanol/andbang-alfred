@@ -2,11 +2,13 @@
 
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import os
-import alp
+import settings
 import teams
 import urlparse
+import webbrowser
+import urllib
 
-settings = alp.Settings()
+user_settings = settings.Settings()
 run_server = True
 
 #Create custom HTTPRequestHandler class
@@ -26,8 +28,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
         if 'access_token' in query:
             token = query['access_token'][0]
-            settings.set(token=token)
-            teams.save()
+            user_settings.set(token=token)
             message = 'Token has been saved. You may close this window.'
             run_server = False
         
@@ -40,3 +41,11 @@ def run(port):
     httpd = HTTPServer(server_address, HTTPRequestHandler)
     while run_server:
         httpd.handle_request()
+
+def save_token():
+    data = {}
+    data['client_id'] = 'c85cbe296399c078cbf90eb10ed52a3e0dd8210c'
+    data['response_type'] = 'token'
+    data['redirect_uri'] = 'http://localhost:3030'
+    webbrowser.open('https://accounts.andbang.com/oauth/authorize?' + urllib.urlencode(data))
+    run(3030)

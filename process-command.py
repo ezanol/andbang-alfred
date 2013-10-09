@@ -1,12 +1,13 @@
 #!/usr/bin/python
 
 import sys
-import alp
+import notification
+import settings
 import api
 import teams
+import server
 
-n = alp.Notification()
-settings = alp.Settings()
+n = notification.Notification()
 
 param_str = sys.argv[1]
 params = param_str.split(':')
@@ -17,7 +18,7 @@ if len(params) < 1:
 command = params[0]
 
 if command == 'token':
-    api.save_token()
+    server.save_token()
     sys.exit()
 
 if command == 'teams':
