@@ -18,7 +18,7 @@ def ac_commands(team_name, is_multi):
         ac = ''
         if is_multi == True:
             ac = team_name + ' '
-        output.append(alp.Item(title='AndBang ' + team_name + ' ' + cmd, autocomplete=ac + '' + cmd, valid=False))
+        output.append(alp.Item(title=team_name + ' ' + cmd, autocomplete=ac + '' + cmd, valid=False))
     return output
 
 def feedback_for_team(team, is_multi):

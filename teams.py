@@ -39,5 +39,5 @@ def autocomplete():
     output = []
     teams = get()
     for team in teams:
-        output.append(alp.Item(title="AndBang Team: " + team["name"], valid=False, autocomplete=team["name"] + ' ', icon=iconPath(team)))
+        output.append(alp.Item(title="Team: " + team["name"], valid=False, autocomplete=team["name"] + ' ', icon=iconPath(team)))
     return alp.feedback(output)
