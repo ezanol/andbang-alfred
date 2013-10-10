@@ -59,7 +59,7 @@ def feedback_for_team(team, is_multi):
     feedback.feedback(output)
 
 # Do nothing until there is an access_token
-if token is None or bool(re.search("^[a-z0-9]{128}$", token)) == False:
+if (token is None or bool(re.search("^[a-z0-9]{128}$", token)) == False) or params[0] == 'token':
     feedback.feedback(feedback.item(title='Get a token', valid=True, arg='token'))
     sys.exit()
 
