@@ -33,14 +33,16 @@ def ac_commands(team, is_multi, cmd):
 
     return output
 
-def ac_teams(user_teams):
+def ac_teams(user_teams, query=''):
     output = []
     for team in user_teams:
         output.append(feedback.item(title=team["name"], valid=False, autocomplete=team["name"] + ' ', icon=icon_path(team)))
+    if query != '':
+        output = fuzzy.fuzzy_search(query, output, lambda x: '%s' % (x['content']['title']))
     feedback.feedback(output)
 
 def feedback_for_team(team, is_multi):
-    commands = param_str.replace(team['name'], '').strip().split(' ')
+    commands = param_str.replace(team['name'], '').replace(team['slug'], '').strip().split(' ')
     output = []
 
     # autocomplete the valid commands
@@ -96,9 +98,10 @@ else:
     # User has multiple teams
     # Check and see if they have specified the name
     for team in user_teams:
-        if param_str.find(team['name']) == 0:
+        check_team_name = param_str.lower().strip()
+        if check_team_name.find(team['name'].lower()) == 0 or check_team_name.find(team['slug'].lower()) == 0:
             feedback_for_team(team, True)
             sys.exit()
 
     # Team name was not found in query
-    ac_teams(user_teams)
+    ac_teams(user_teams, check_team_name)
