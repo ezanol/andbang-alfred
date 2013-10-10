@@ -56,7 +56,7 @@ def save_token():
 
 def save_teams():
     r = api.method('/me/teams')
-    if r.status_code == 200:
+    if r.status_code == requests.codes.ok:
         teams = r.json()
         if len(teams) > 0:
             user_settings.set(teams=teams)
