@@ -4,7 +4,6 @@ import sys
 import api
 import server
 import requests
-import feedback
 
 param_str = sys.argv[1]
 params = param_str.split(':')
