@@ -9,15 +9,18 @@ import fuzzy
 import settings
 
 valid_commands = ['tasks', 'notifications']
-user_settings = settings.Settings()
-token = user_settings.get('token')
+token = settings.get('token', '')
+is_first_time = str(token == '').lower()
 param_str = sys.argv[1]
 params = param_str.split(' ')
 
 def icon_path(team):
     return core.storage('team-' + team['name'])
 
-def ac_commands(team_name, is_multi, cmd):
+def icon_path_member(member):
+    return core.storage('member-' + member['id'])
+
+def ac_commands(team, is_multi, cmd):
     global valid_commands
     output = []
     if len(cmd) > 0:
@@ -25,15 +28,15 @@ def ac_commands(team_name, is_multi, cmd):
     for cmd in valid_commands:
         ac = ''
         if is_multi == True:
-            ac = team_name + ' '
-        output.append(feedback.item(title=team_name + ' ' + cmd, autocomplete=ac + '' + cmd, valid=False))
+            ac = team['name'] + ' '
+        output.append(feedback.item(title=team['name'] + ' ' + cmd, autocomplete=ac + '' + cmd, valid=False, icon=icon_path(team)))
 
     return output
 
 def ac_teams(user_teams):
     output = []
     for team in user_teams:
-        output.append(feedback.item(title="Team: " + team["name"], valid=False, autocomplete=team["name"] + ' ', icon=icon_path(team)))
+        output.append(feedback.item(title=team["name"], valid=False, autocomplete=team["name"] + ' ', icon=icon_path(team)))
     feedback.feedback(output)
 
 def feedback_for_team(team, is_multi):
@@ -42,7 +45,7 @@ def feedback_for_team(team, is_multi):
 
     # autocomplete the valid commands
     if valid_commands.count(commands[0]) == 0:
-        output = ac_commands(team['name'], is_multi, commands[0])
+        output = ac_commands(team, is_multi, commands[0])
     # Display tasks
     elif commands[0] == 'tasks':
         tasks = api.cache_method('/me/tasks', team['id'])
@@ -53,18 +56,24 @@ def feedback_for_team(team, is_multi):
         for task in tasks:
             output.append(feedback.item(title="Task: " + task['title'], valid=True, arg='ship:' + team['id'] + ':' + task['id'], icon=icon_path(team)))
     elif commands[0] == 'notifications':
+        members = settings.get('members', [])
         notifications = tasks = api.cache_method('/me/notifications', team['id'])
         for n in notifications:
-            output.append(feedback.item(title=n['title'], subtitle=n['body'], valid=False, icon=icon_path(team)))
+            m = [member for member in members if member['id'] == n['who']]
+            if len(m) >= 1:
+                icon = icon_path_member(m[0])
+            else:
+                icon = icon_path(team)
+            output.append(feedback.item(title=n['title'], subtitle=n['body'], valid=False, icon=icon))
     feedback.feedback(output)
 
 # Do nothing until there is an access_token
 if (token is None or bool(re.search("^[a-z0-9]{128}$", token)) == False) or params[0] == 'token':
-    feedback.feedback(feedback.item(title='Get a token', valid=True, arg='token'))
+    feedback.feedback(feedback.item(title='Get a token', valid=True, arg='token:' + str(is_first_time)))
     sys.exit()
 
 # Check that the user has a team
-user_teams = user_settings.get('teams', [])
+user_teams = settings.get('teams', [])
 if len(user_teams) == 0 or params[0] == 'teams':
     title = ''
     if len(user_teams) == 0:
@@ -72,6 +81,10 @@ if len(user_teams) == 0 or params[0] == 'teams':
     else:
         title = 'Update'
     feedback.feedback(feedback.item(title=title + ' teams', autocomplete='teams', subtitle='Use `teams` to update your teams', arg='teams', valid=True))
+    sys.exit()
+
+if params[0] == 'members':
+    feedback.feedback(feedback.item(title='Update members', autocomplete='members', subtitle='Use `members` to update your team members', arg='members', valid=True))
     sys.exit()
 
 # There is only one user team so use that

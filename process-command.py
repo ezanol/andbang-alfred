@@ -1,29 +1,29 @@
 #!/usr/bin/python
 
 import sys
-import notification
-import settings
+import notification as n
 import api
 import server
 import requests
 
-user_settings = settings.Settings()
-n = notification.Notification()
-
 param_str = sys.argv[1]
 params = param_str.split(':')
-
-if len(params) < 1:
-    sys.exit()
 
 command = params[0]
 
 if command == 'token':
-    server.save_token()
+    if len(params) > 1 and params[1] == 'true'
+        server.save_token(True)
+    else:
+        server.save_token(False)
     sys.exit()
 
 if command == 'teams':
     server.save_teams()
+    sys.exit()
+
+if command == 'members':
+    server.save_members()
     sys.exit()
 
 if len(params) == 3:

@@ -5,40 +5,26 @@ import os
 import core
 import codecs
 
+path = core.storage("settings.json")
 
-class Settings(object):
-    def __init__(self):
-        self._settingsPath = core.storage("settings.json")
-        if not os.path.exists(self._settingsPath):
-            blank = {}
-            with codecs.open(self._settingsPath, "w", "utf-8") as f:
-                json.dump(blank, f)
-            self._loadedSettings = blank
-        else:
-            with codecs.open(self._settingsPath, "r", "utf-8") as f:
-                payload = json.load(f)
-            self._loadedSettings = payload
+def load():
+    if not os.path.exists(path):
+        blank = {}
+        with codecs.open(path, "w", "utf-8") as f:
+            json.dump(blank, f)
+            return blank
+    with codecs.open(path, "r", "utf-8") as f:
+        return json.load(f)
 
-    def load(self):
-        with codecs.open(self._settingsPath, "r", "utf-8") as f:
-            payload = json.load(f)
-        return payload
+def set(**kwargs):
+    settings = load()
+    for (k, v) in kwargs.iteritems():
+        settings[k] = v
+    with codecs.open(path, "w", "utf-8") as f:
+        json.dump(settings, f)
 
-    def set(self, **kwargs):
-        self._loadedSettings = self.load()
-        for (k, v) in kwargs.iteritems():
-            self._loadedSettings[k] = v
-        with codecs.open(self._settingsPath, "w", "utf-8") as f:
-            json.dump(self._loadedSettings, f)
-
-    def get(self, k, default=None):
-        try:
-            return self._loadedSettings[k]
-        except KeyError:
-            return default
-
-    def delete(self, k):
-        if k in self._loadedSettings.keys():
-            self._loadedSettings.pop(k)
-            with codecs.open(self._settingsPath, "w", "utf-8") as f:
-                json.dump(self._loadedSettings, f)
+def get(k, default=None):
+    try:
+        return load()[k]
+    except KeyError:
+        return default

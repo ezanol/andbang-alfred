@@ -7,11 +7,9 @@ import time
 import os
 import settings
 
-user_settings = settings.Settings()
-
 def method(url, team_id=None, data={}, method='get'):
     api_url = 'https://api.andbang.com:443'
-    token = user_settings.get('token', '')
+    token = settings.get('token', '')
     if team_id != None:
         api_url += '/teams/' + team_id
     api_url += url
@@ -19,7 +17,7 @@ def method(url, team_id=None, data={}, method='get'):
 
 def cache_method(url, team_id=None):
     api_url = 'https://api.andbang.com:443'
-    token = user_settings.get('token')
+    token = settings.get('token')
     if team_id != None:
         api_url += '/teams/' + team_id
     api_url += url

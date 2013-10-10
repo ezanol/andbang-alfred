@@ -9,10 +9,8 @@ import urllib
 import api
 import requests
 import core
-import notification
+import notification as n
 
-n = notification.Notification()
-user_settings = settings.Settings()
 run_server = True
 
 #Create custom HTTPRequestHandler class
@@ -32,10 +30,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
         if 'access_token' in query:
             token = query['access_token'][0]
-            user_settings.set(token=token)
+            settings.set(token=token)
             message = 'Token has been saved. You may close this window.'
-            run_server = False
         
+        run_server = False
         refresh_script = "<script>h = window.location.href; !!~h.indexOf('#') ? (window.location.href = h.replace('#', '?')) : document.write('" + message + "');</script>"
         self.wfile.write(refresh_script)
         return
@@ -59,15 +57,38 @@ def save_teams():
     if r.status_code == requests.codes.ok:
         teams = r.json()
         if len(teams) > 0:
-            user_settings.set(teams=teams)
+            settings.set(teams=teams)
             for team in teams:
-                r = requests.get('http:' + team["thumbUrl"], stream=True)
-                if r.status_code == 200:
-                    with open(core.storage('team-' + team['name']), 'wb') as f:
-                        for chunk in r.iter_content():
-                            f.write(chunk)
+                save_image('http:' + team["thumbUrl"], 'team-' + team['name'])
             n.notify("AndBang Workflow Success", "Your teams were saved!", "Teams: " + ', '.join([team["name"] for team in teams]))
         else:
             n.notify("AndBang Workflow Error", "No teams were saved", "Please create one at http://andbang.com")
     else:
-        n.notify("AndBang Workflow Error", resp["message"], "Visit http://andbang.com")
+        n.notify("AndBang Workflow Error", resp["message"], "")
+
+def save_image(path, name):
+    r = requests.get(path, stream=True)
+    if r.status_code == 200:
+        with open(core.storage(name), 'wb') as f:
+            for chunk in r.iter_content():
+                f.write(chunk)
+
+def save_members():
+    output = []
+    teams = settings.get('teams', [])
+    for team in teams:
+        r = api.method('/members', team['id'])
+        if r.status_code == requests.codes.ok:
+            members = r.json()
+            if len(members) > 0:
+                for member in members:
+                    print 'save ' + member['username']
+                    save_image('http:' + member["smallPicUrl"], 'member-' + member['id'])
+                    output.append({your_key: member[your_key] for your_key in ['id', 'username', 'smallPicUrl', 'firstName', 'lastName']})
+                settings.set(members=output)
+                n.notify("AndBang Workflow Success", "Your teams were saved!", "Teams: " + ', '.join([team["name"] for team in teams]))
+            else:
+                n.notify("AndBang Workflow Error", "No members were saved", "Have some people join your team!")
+        else:
+            error = r.json()
+            n.notify("AndBang Workflow Error", error["message"], "")

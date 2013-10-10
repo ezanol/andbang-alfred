@@ -1,37 +1,27 @@
-import threading
-import objc
-from Foundation import *
-from AppKit import *
-from PyObjCTools import AppHelper
-import platform
-import core
+# Python integration with Mountain Lion's notification center
+# https://github.com/maranas/pyNotificationCenter
 
+import Foundation, objc
 
-NSUserNotificationActivationTypeNone = 0
-NSUserNotificationActivationTypeContentsClicked = 1
-NSUserNotificationActivationTypeActionButtonClicked = 2
+NSUserNotification = objc.lookUpClass('NSUserNotification')
+NSUserNotificationCenter = objc.lookUpClass('NSUserNotificationCenter')
 
-
-class Notification(object):
-    def notify(self, title, subtitle, text, info=None):
-        v, _, _ = platform.mac_ver()
-        v = float('.'.join(v.split('.')[:2]))
-        if v < 10.8:
-            core.log("Notification failed: OS version %s < 10.8." % v)
-            return
-
-        app = NSApplication.sharedApplication()
-
-        NSUserNotification = objc.lookUpClass("NSUserNotification")
-        NSUserNotificationCenter = objc.lookUpClass("NSUserNotificationCenter")
-        notification = NSUserNotification.alloc().init()
-
-        notification.setTitle_(title)
-        notification.setSubtitle_(subtitle)
-        notification.setInformativeText_(text)
-        notification.setSoundName_("NSUserNotificationDefaultSoundName")
-        notification.setUserInfo_(info)
-
-        app.setDelegate_(self)
-        NSUserNotificationCenter.defaultUserNotificationCenter().setDelegate_(self)
-        NSUserNotificationCenter.defaultUserNotificationCenter().scheduleNotification_(notification)
+def notify(title, subtitle, info_text, delay=0, sound=False, userInfo={}):
+  """ Python method to show a desktop notification on Mountain Lion. Where:
+        title: Title of notification
+        subtitle: Subtitle of notification
+        info_text: Informative text of notification
+        delay: Delay (in seconds) before showing the notification
+        sound: Play the default notification sound
+        userInfo: a dictionary that can be used to handle clicks in your
+                  app's applicationDidFinishLaunching:aNotification method
+  """
+  notification = NSUserNotification.alloc().init()
+  notification.setTitle_(title)
+  notification.setSubtitle_(subtitle)
+  notification.setInformativeText_(info_text)
+  notification.setUserInfo_(userInfo)
+  if sound:
+    notification.setSoundName_("NSUserNotificationDefaultSoundName")
+  notification.setDeliveryDate_(Foundation.NSDate.dateWithTimeInterval_sinceDate_(delay, Foundation.NSDate.date()))
+  NSUserNotificationCenter.defaultUserNotificationCenter().scheduleNotification_(notification)
