@@ -40,17 +40,21 @@ def cache_method(url, team_id=None):
 
     if valid_cache_file != None:
         resp = core.jsonLoad(valid_cache_file, [])
-        for cache_file in cache_files:
-            if cache_file != valid_cache_file:
-                os.remove(cache_file)
+        remove_cache_files(cache_files, valid_cache_file)
         return resp
     else:
         r = requests.get(api_url, headers={'Authorization': 'Bearer ' + token})
         if r.status_code == requests.codes.ok:
             resp = r.json()
+            remove_cache_files(cache_files)
             core.jsonDump(resp, core.cache(this_cache_name + '|' + str(int(now)) + '.json'))
             return resp
         else:
             resp = r.json()
             core.feedback(core.Item(title="Error: " + resp['message'], arg="token", valid=True))
             sys.exit()
+
+def remove_cache_files(cache_files, valid=None):
+    for cache_file in cache_files:
+        if cache_file != valid:
+            os.remove(cache_file)
