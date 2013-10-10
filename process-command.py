@@ -1,10 +1,10 @@
 #!/usr/bin/python
 
 import sys
-import notification as n
 import api
 import server
 import requests
+import feedback
 
 param_str = sys.argv[1]
 params = param_str.split(':')
@@ -12,7 +12,7 @@ params = param_str.split(':')
 command = params[0]
 
 if command == 'token':
-    if len(params) > 1 and params[1] == 'true'
+    if len(params) > 1 and params[1] == 'true':
         server.save_token(True)
     else:
         server.save_token(False)
@@ -44,13 +44,13 @@ if len(params) == 3:
         r = api.method('/tasks/' + params[2], params[1], {}, 'delete')
         verb = 'deleted'
     else:
-        n.notify("No action was specified", "", "")
+        print "Error: no action was specified"
 
     if r.status_code >= 200 and r.status_code <= 299:
         task = r.json()
-        n.notify('Task was ' + verb, task['title'], task['id'])
+        print verb.capitalize() + ' - ' + task['title']
     else:
         error = r.json()
-        n.notify('Error with task', error['message'], '')
+        print "Error: " + error['message']
 else:
-    n.notify("Number of parameters was incorrect", "", "")
+    print "Error: incorrect arguments"

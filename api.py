@@ -6,6 +6,7 @@ import glob
 import time
 import os
 import settings
+import re
 
 def method(url, team_id=None, data={}, method='get'):
     api_url = 'https://api.andbang.com:443'
@@ -13,7 +14,18 @@ def method(url, team_id=None, data={}, method='get'):
     if team_id != None:
         api_url += '/teams/' + team_id
     api_url += url
+    if method != 'get':
+        if api_url.find('/tasks') > -1:
+            # remove me-tasks caches
+            cache_url = api_url.split('/tasks/')[0] + '/me/tasks'
+            remove_cache_files(get_cache_files(get_cache_name(cache_url)))
     return getattr(requests, method)(api_url, data=json.dumps(data), headers={'Authorization': 'Bearer ' + token})
+
+def get_cache_name(url):
+    return url.split(':443')[1].strip('/').replace('/', '-')
+
+def get_cache_files(name):
+    return glob.glob(core.cache(name) + '*')
 
 def cache_method(url, team_id=None):
     api_url = 'https://api.andbang.com:443'
@@ -23,10 +35,10 @@ def cache_method(url, team_id=None):
     api_url += url
 
     now = time.time()
-    this_cache_name = api_url.split(':443')[1].strip('/').replace('/', '-')
+    this_cache_name = get_cache_name(api_url)
     valid_cache_file = None
 
-    cache_files = glob.glob(core.cache(this_cache_name) + '*')
+    cache_files = get_cache_files(this_cache_name)
     for cache_file in cache_files:
         cache_ts = cache_file.replace(core.cache(this_cache_name) + '|', '').split('.')[0]
         time_ago = int(now) - int(cache_ts)

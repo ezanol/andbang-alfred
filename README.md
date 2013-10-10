@@ -34,10 +34,5 @@ There will be no need or prompt to type your team name. All commands will apply 
 - `members` Use this if you have added/removed team members and wish to update your cached team members.
 - `token' Use this to manually get a new token
 
-## Todo
-- Autoclear cache for type of request after a POST
-- Have you step setup where `token` will call `teams` and `members` in the background
-
-
 ## License
 MIT

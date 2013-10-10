@@ -32,8 +32,8 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             token = query['access_token'][0]
             settings.set(token=token)
             message = 'Token has been saved. You may close this window.'
+            run_server = False
         
-        run_server = False
         refresh_script = "<script>h = window.location.href; !!~h.indexOf('#') ? (window.location.href = h.replace('#', '?')) : document.write('" + message + "');</script>"
         self.wfile.write(refresh_script)
         return
@@ -44,13 +44,16 @@ def run(port):
     while run_server:
         httpd.handle_request()
 
-def save_token():
+def save_token(first=False):
     data = {}
     data['client_id'] = 'c85cbe296399c078cbf90eb10ed52a3e0dd8210c'
     data['response_type'] = 'token'
     data['redirect_uri'] = 'http://localhost:3030'
     webbrowser.open('https://accounts.andbang.com/oauth/authorize?' + urllib.urlencode(data))
     run(3030)
+    if first == True:
+        save_teams()
+        save_members()
 
 def save_teams():
     r = api.method('/me/teams')
@@ -82,11 +85,10 @@ def save_members():
             members = r.json()
             if len(members) > 0:
                 for member in members:
-                    print 'save ' + member['username']
                     save_image('http:' + member["smallPicUrl"], 'member-' + member['id'])
                     output.append({your_key: member[your_key] for your_key in ['id', 'username', 'smallPicUrl', 'firstName', 'lastName']})
                 settings.set(members=output)
-                n.notify("AndBang Workflow Success", "Your teams were saved!", "Teams: " + ', '.join([team["name"] for team in teams]))
+                n.notify("AndBang Workflow Success", "Your teams members were saved!", "")
             else:
                 n.notify("AndBang Workflow Error", "No members were saved", "Have some people join your team!")
         else:
