@@ -46,7 +46,7 @@ if len(params) == 3:
     else:
         n.notify("No action was specified", "", "")
 
-    if r.status_code == requests.codes.ok:
+    if r.status_code >= 200 and r.status_code <= 299:
         task = r.json()
         n.notify('Task was ' + verb, task['title'], task['id'])
     else:
