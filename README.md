@@ -12,7 +12,7 @@ Basic usage: `! [team name] [command]`
 You will need to follow the auth instructions to save a token. Type `!` and the workflow will take care of the rest.
 
 ### If you have more than 1 team
-After typing `!` you will see entries for each of your teams. Tab will autocomplete your team name.
+After typing `!` you will see entries for each of your teams. Tab will autocomplete your team name. Typing will filter your teams.
 
 ### If you have 1 team
 There will be no need or prompt to type your team name. All commands will apply to your one team.
@@ -31,11 +31,13 @@ There will be no need or prompt to type your team name. All commands will apply 
 - `notifications` will show you all the current notifications for a team
 
 - `teams` Use this if you have added/removed teams and wish to update your cached teams.
-
+- `members` Use this if you have added/removed team members and wish to update your cached team members.
 - `token' Use this to manually get a new token
 
 ## Todo
 - Autoclear cache for type of request after a POST
+- Have you step setup where `token` will call `teams` and `members` in the background
+
 
 ## License
 MIT
