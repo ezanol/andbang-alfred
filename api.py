@@ -7,6 +7,7 @@ import time
 import os
 import settings
 import re
+import feedback
 
 def method(url, team_id=None, data={}, method='get'):
     api_url = 'https://api.andbang.com:443'
@@ -54,14 +55,19 @@ def cache_method(url, team_id=None):
         return resp
     else:
         r = requests.get(api_url, headers={'Authorization': 'Bearer ' + token})
+        resp = r.json()
         if r.status_code == requests.codes.ok:
-            resp = r.json()
             remove_cache_files(cache_files)
             core.jsonDump(resp, core.cache(this_cache_name + '|' + str(int(now)) + '.json'))
             return resp
+        elif r.status_code == 400 and resp['message'] == 'This access token has expired.':
+            feedback.feedback(feedback.item(title='You need to refresh your token', subtitle="Select to refresh your token", valid=True, arg='token:false'))
+            sys.exit()
+        elif r.status_code == 404 and resp['message'] == 'Um, so we need a valid id to lookup access tokens':
+            feedback.feedback(feedback.item(title='You need an access token', subtitle="Select to retrieve a token", valid=True, arg='token:true'))
+            sys.exit()
         else:
-            resp = r.json()
-            core.feedback(core.Item(title="Error: " + resp['message'], arg="token", valid=True))
+            feedback.feedback(feedback.item(title='There was a problem with the API', subtitle=resp['message'], valid=False))
             sys.exit()
 
 def remove_cache_files(cache_files, valid=None):

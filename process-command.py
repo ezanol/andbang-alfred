@@ -3,7 +3,6 @@
 import sys
 import api
 import server
-import requests
 
 param_str = sys.argv[1]
 params = param_str.split(':')
