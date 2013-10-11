@@ -10,17 +10,21 @@ import re
 import feedback
 
 def method(url, team_id=None, data={}, method='get'):
-    api_url = 'https://api.andbang.com:443'
     token = settings.get('token', '')
-    if team_id != None:
-        api_url += '/teams/' + team_id
-    api_url += url
+    api_url = get_api_url(url, team_id)
     if method != 'get':
         if api_url.find('/tasks') > -1:
             # remove me-tasks caches
             cache_url = api_url.split('/tasks/')[0] + '/me/tasks'
             remove_cache_files(get_cache_files(get_cache_name(cache_url)))
     return getattr(requests, method)(api_url, data=json.dumps(data), headers={'Authorization': 'Bearer ' + token})
+
+def get_api_url(url, team_id=None):
+    api_url = 'https://api.andbang.com:443'
+    if team_id != None:
+        api_url += '/teams/' + team_id
+    api_url += url
+    return api_url
 
 def get_cache_name(url):
     return url.split(':443')[1].strip('/').replace('/', '-')
@@ -29,14 +33,8 @@ def get_cache_files(name):
     return glob.glob(core.cache(name) + '*')
 
 def cache_method(url, team_id=None):
-    api_url = 'https://api.andbang.com:443'
-    token = settings.get('token')
-    if team_id != None:
-        api_url += '/teams/' + team_id
-    api_url += url
-
     now = time.time()
-    this_cache_name = get_cache_name(api_url)
+    this_cache_name = get_cache_name(get_api_url(url, team_id))
     valid_cache_file = None
 
     cache_files = get_cache_files(this_cache_name)
@@ -54,9 +52,9 @@ def cache_method(url, team_id=None):
         remove_cache_files(cache_files, valid_cache_file)
         return resp
     else:
-        r = requests.get(api_url, headers={'Authorization': 'Bearer ' + token})
+        r = method(url, team_id)
         resp = r.json()
-        if r.status_code == requests.codes.ok:
+        if r.status_code == 200:
             remove_cache_files(cache_files)
             core.jsonDump(resp, core.cache(this_cache_name + '|' + str(int(now)) + '.json'))
             return resp

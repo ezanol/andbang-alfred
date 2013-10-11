@@ -57,7 +57,7 @@ def save_token(first=False):
 
 def save_teams():
     r = api.method('/me/teams')
-    if r.status_code == requests.codes.ok:
+    if r.status_code == 200:
         teams = r.json()
         if len(teams) > 0:
             settings.set(teams=teams)
@@ -81,7 +81,7 @@ def save_members():
     teams = settings.get('teams', [])
     for team in teams:
         r = api.method('/members', team['id'])
-        if r.status_code == requests.codes.ok:
+        if r.status_code == 200:
             members = r.json()
             if len(members) > 0:
                 for member in members:
