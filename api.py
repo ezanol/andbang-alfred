@@ -15,7 +15,10 @@ def method(url, team_id=None, data={}, method='get'):
     if method != 'get':
         if api_url.find('/tasks') > -1:
             # remove me-tasks caches
-            cache_url = api_url.split('/tasks/')[0] + '/me/tasks'
+            if api_url.find('/me/') == -1:
+                cache_url = api_url.split('/tasks/')[0] + '/me/tasks'
+            else:
+                cache_url = api_url
             remove_cache_files(get_cache_files(get_cache_name(cache_url)))
     return getattr(requests, method)(api_url, data=json.dumps(data), headers={'Authorization': 'Bearer ' + token})
 
