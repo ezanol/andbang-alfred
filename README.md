@@ -25,14 +25,20 @@ There will be no need or prompt to type your team name. All commands will apply 
   - Selecting with `SHIFT` will activate it.
   - Selecting with `CTRL` will delete it.
   - Typing more after `tasks` will:
-    - filter your tasks by title against what you typed
-    - bring up an extra option to `create` a new task with that as the title
+      - filter your tasks by title against what you typed
+      - bring up an extra option to `create` a new task with that as the title
 
 - `notifications` will show you all the current notifications for a team
 
 - `teams` Use this if you have added/removed teams and wish to update your cached teams.
 - `members` Use this if you have added/removed team members and wish to update your cached team members.
 - `token` Use this to manually get a new token
+
+## TODO
+
+- Ability to set a default team
+- Avoid refresh token needing user input by having a server component to house client_secret
+
 
 ## License
 MIT
