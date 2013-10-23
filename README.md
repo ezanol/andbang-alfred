@@ -9,7 +9,7 @@ Download and install the [workflow file](https://github.com/lukekarrys/andbang-a
 Basic usage: `! [team name] [command]`
 
 ### First
-You will need to follow the auth instructions to save a token. Type `!` and the workflow will take care of the rest.
+Pull up Alfred, type `!` and the workflow will lead you through the auth process. Follow the instructions to save a token.
 
 ### If you have more than 1 team
 After typing `!` you will see entries for each of your teams. Tab will autocomplete your team name. Typing will filter your teams.
