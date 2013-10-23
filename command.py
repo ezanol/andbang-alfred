@@ -55,11 +55,15 @@ def feedback_for_team(team, is_multi):
         if len(commands) > 1 and len(title) > 0:
             output.append(feedback.item(title='Create: ' + title, valid=True, arg='create:' + team['id'] + ':' + title, icon=icon_path(team)))
             tasks = fuzzy.fuzzy_search(title, tasks, lambda x: '%s' % (x['title']))
+        elif len(tasks) == 0:
+            output.append(feedback.item(title='You have no tasks', valid=False, icon=icon_path(team)))
         for task in tasks:
             output.append(feedback.item(title="Task: " + task['title'], valid=True, arg='ship:' + team['id'] + ':' + task['id'], icon=icon_path(team)))
     elif commands[0] == 'notifications':
         members = settings.get('members', [])
-        notifications = tasks = api.cache_method('/me/notifications', team['id'])
+        notifications = api.cache_method('/me/notifications', team['id'])
+        if len(notifications) == 0:
+            output.append(feedback.item(title='You have no notifications', valid=False, icon=icon_path(team)))
         for n in notifications:
             m = [member for member in members if member['id'] == n['who']]
             if len(m) >= 1:
