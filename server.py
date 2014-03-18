@@ -33,7 +33,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
             settings.set(token=token)
             message = 'Token has been saved. You may close this window.'
             run_server = False
-        
+
         refresh_script = "<script>h = window.location.href; !!~h.indexOf('#') ? (window.location.href = h.replace('#', '?')) : document.write('" + message + "');</script>"
         self.wfile.write(refresh_script)
         return
@@ -49,7 +49,7 @@ def save_token(first=False):
     data['client_id'] = 'c85cbe296399c078cbf90eb10ed52a3e0dd8210c'
     data['response_type'] = 'token'
     data['redirect_uri'] = 'http://localhost:3030'
-    webbrowser.open('https://accounts.andbang.com/oauth/authorize?' + urllib.urlencode(data))
+    webbrowser.open('https://apps.andyet.com/oauth/authorize?' + urllib.urlencode(data))
     run(3030)
     if first == True:
         save_teams()
